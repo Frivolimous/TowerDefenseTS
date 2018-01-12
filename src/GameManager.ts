@@ -45,7 +45,7 @@ class GameManager{
 		JME.addEventListener(EventType.CLICK_EVENT,this.onClick);
 		JME.addEventListener(EventType.DRAG_EVENT,this.onDrag);
 
-		/*this.tilemap=new JMTileMap({tilesAcross:25,tilesDown:20,tileSize:30});
+		this.tilemap=new JMTileMap({tilesAcross:25,tilesDown:20,tileSize:30});
 		this.tilemap.loadWalkMap("su-----------------------"+
 								 "uu-----------------------"+
 								 "uu-----------------xxxx--"+
@@ -66,8 +66,8 @@ class GameManager{
 								 "uu-----------------------"+
 								 "uu-----------------------"+
 								 "uu-----------------------"
-								  );*/
-		this.tilemap=new JMTileMap({tilesAcross:20,tilesDown:14,tileSize:30});
+								  );
+		/*this.tilemap=new JMTileMap({tilesAcross:20,tilesDown:14,tileSize:30});
 		this.tilemap.loadWalkMap("00000000000000000000"+
 								 "suuuuuuuuuuuuuu00000"+
 								 "000p000000000pup0000"+
@@ -82,7 +82,7 @@ class GameManager{
 								 "00000000000uuuuuuu00"+
 								 "00000000000000p0p000"+
 								 "00000000000000000000"
-								  );
+								  );*/
 		this.gameStage.addChildAt(this.tilemap,0);
 		this.gameUI=new GameUI;
 		this.gameUI.addSelections([["Select",InteractionMode.SELECT],["Sell",InteractionMode.SELL],["Wall",InteractionMode.WALL],["Turret",InteractionMode.TURRET],["Nova",InteractionMode.NOVA],["Ice",InteractionMode.ICE],["Poison",InteractionMode.POISON]],(i:number)=>{this.interactionMode=i;});

@@ -1092,21 +1092,27 @@ var GameManager = (function () {
         JME.addEventListener(EventType.MOVE_EVENT, this.onMouseMove);
         JME.addEventListener(EventType.CLICK_EVENT, this.onClick);
         JME.addEventListener(EventType.DRAG_EVENT, this.onDrag);
-        this.tilemap = new JMTileMap({ tilesAcross: 20, tilesDown: 14, tileSize: 30 });
-        this.tilemap.loadWalkMap("00000000000000000000" +
-            "suuuuuuuuuuuuuu00000" +
-            "000p000000000pup0000" +
-            "0000000p00000pup0000" +
-            "000000uuuuuuuuu00000" +
-            "00000pup00p000000000" +
-            "000000uuuuuu00000uue" +
-            "0000000000pup0000up0" +
-            "00000000p0pu00000u00" +
-            "00000000000u00000u00" +
-            "00000000000u00p00up0" +
-            "00000000000uuuuuuu00" +
-            "00000000000000p0p000" +
-            "00000000000000000000");
+        this.tilemap = new JMTileMap({ tilesAcross: 25, tilesDown: 20, tileSize: 30 });
+        this.tilemap.loadWalkMap("su-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------xxxx--" +
+            "su------------------yyxx-" +
+            "uu-------------------xx--" +
+            "uu----xxxx---------------" +
+            "uu---xxxx---------------e" +
+            "su---xxxxx---------------" +
+            "uu----xxx----------------" +
+            "uu-----------------------" +
+            "su---------------yyx-----" +
+            "uu--------------yyyxx----" +
+            "uu---------------xxx-----" +
+            "su-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------------" +
+            "uu-----------------------");
         this.gameStage.addChildAt(this.tilemap, 0);
         this.gameUI = new GameUI;
         this.gameUI.addSelections([["Select", InteractionMode.SELECT], ["Sell", InteractionMode.SELL], ["Wall", InteractionMode.WALL], ["Turret", InteractionMode.TURRET], ["Nova", InteractionMode.NOVA], ["Ice", InteractionMode.ICE], ["Poison", InteractionMode.POISON]], function (i) { _this.interactionMode = i; });
@@ -2280,7 +2286,9 @@ var JMTile = (function () {
         return m;
     };
     JMTile.prototype.getWalkable = function () {
-        if (this.building != null && this.building.speed == 0)
+        if (this.building)
+            console.log("A");
+        if (this.building != null)
             return false;
         else
             return this.walkable;
@@ -3219,6 +3227,7 @@ var FlyingObject = (function (_super) {
         _this.shadow.x = _this.pivot.x - _this.shadow.width / 2;
         _this.shadow.y = _this.pivot.y - _this.shadow.height / 2;
         _this.subtype = WalkingType.FLYER;
+        _this.maxHealth = _this.health = 50;
         return _this;
     }
     FlyingObject.prototype.hoverMove = function () {

@@ -240,6 +240,7 @@ class FlyingObject extends WalkingObject{
 		this.shadow.x=this.pivot.x-this.shadow.width/2;
 		this.shadow.y=this.pivot.y-this.shadow.height/2;
 		this.subtype=WalkingType.FLYER;
+		this.maxHealth=this.health=50;
 	}
 
 	hoverCount:number=0;

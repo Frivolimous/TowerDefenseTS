@@ -246,7 +246,8 @@ class JMTile{
 	}
 
 	getWalkable():boolean{
-		if (this.building!=null && this.building.speed==0) return false;
+		if (this.building) console.log("A");
+		if (this.building!=null) return false;
 		else return this.walkable;
 	}
 
