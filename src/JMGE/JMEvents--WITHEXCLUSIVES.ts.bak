@@ -1,0 +1,188 @@
+enum EventType{
+	UI_SELECT_MODE,
+	DRAG_EVENT,
+	MOVE_EVENT,
+	MOUSE_DOWN,
+	MOUSE_UP,
+	CLICK_EVENT,
+	UI_CLICK_SKILL,
+	UI_BUTTON_PRESS,
+}
+
+enum ObjectEvent{
+	END_TWEEN,
+}
+
+enum EventClass{
+	NORMAL,
+	ONCE,
+	EXCLUSIVE,
+}
+
+class JME{
+	private static registers:Array<JMERegister>=[];
+	private static activeRegisters:Array<JMERegister>=[];
+	private static eventLog:Array<any>=[];
+	private static ticker:any;
+
+	static init(_ticker:any){
+		this.ticker=_ticker;
+		_ticker.add(this.onTick.bind(this));
+	}
+
+	static addToTicker(_output:Function){
+		this.ticker.add(_output);
+	}
+
+	private static createRegister(_type:EventType,_log:boolean=false){
+		this.registers[_type]=new JMERegister(_type);
+		if (_log) this.addEventListener(_type,JME.logEvent);
+	}
+
+	static addEventListener(_type:EventType,_function:Function,_class:EventClass=EventClass.NORMAL){
+		if (this.registers[_type]==null) this.createRegister(_type);
+		if (_class==EventClass.ONCE){
+			this.registers[_type].once.push(_function);
+		}else if (_class==EventClass.EXCLUSIVE){
+			this.registers[_type].exclusive.push(_function);
+		}else{
+			this.registers[_type].listeners.push(_function);
+		}
+	}
+
+	static removeEventListener(_type:EventType,_function:Function){
+		JMBL.removeFromArray(_function,this.registers[_type].listeners);
+	}
+
+	static publishEvent(_type:EventType,_par:any){
+		if (this.registers[_type]==null) this.createRegister(_type);
+		this.registers[_type].events.push(_par);
+		if (!this.registers[_type].active){
+			this.registers[_type].active=true;
+			this.activeRegisters.push(this.registers[_type]);
+		}
+	}
+
+	static publishSelfEvent(_register:JMERegister,_par:any){
+		_register.events.push(_par);
+		if (!_register.active){
+			_register.active=true;
+			this.activeRegisters.push(_register);
+		}
+	}
+
+	private static logEvent(e:any){
+		this.eventLog.push(e);	
+	}
+	static traceEventLog(){
+		console.log(this.eventLog);
+	}
+
+	private static onTick(){
+		while (this.activeRegisters.length>0){
+			let _register:JMERegister=this.activeRegisters[0];
+			while (_register.events.length>0){
+				let _cEvent:JMEvent=_register.events[0];
+				let _continue:Boolean=false;
+				for (var i:number=0;i<_register.exclusive.length;i+=1){
+					if (!_register.exclusive[i](_cEvent)) {
+						_continue=true;
+						break;
+					}
+				}
+				if (!_continue){
+					for (i=0;i<_register.listeners.length;i+=1){
+						_register.listeners[i](_cEvent);
+					}
+					while (_register.once.length>0){
+						_register.once[0](_cEvent);
+						_register.once.shift();
+					}
+				}
+				_register.events.shift();
+			}
+			_register.active=false;
+			this.activeRegisters.shift();
+		}
+	}
+}
+
+class JMERegister{
+	listeners:Array<Function>=[];
+	once:Array<Function>=[];
+	exclusive:Array<Function>=[];
+
+	events:Array<JMEvent>=[];
+	active:Boolean=false;
+	type:any;
+	
+
+	constructor(_type:any){
+		this.type=_type;
+	}
+}
+
+class JMEvent{
+	eventType:any;
+}
+
+class JME_UISelectModeEvent extends JMEvent{
+	mode:number;
+	constructor(_mode:number){
+		super();
+		this.eventType=EventType.UI_SELECT_MODE;
+		this.mode=_mode;
+	}
+}
+
+/*function EventManager_UIClickSkill(i,_callback){
+	this.eventType=EventManagerTypes.UI_CLICK_SKILL;
+	this.index=i;
+	this.callback=_callback || function(){};
+}
+
+function EventManager_UIButtonPress(_id,_callback){
+	this.eventType=EventManagerTypes.UI_BUTTON_PRESS;
+	this.id=_id;
+	this.callback=_callback || function(){};
+}*/
+
+class JME_MoveEvent extends JMEvent{
+	mouse:MouseObject;
+
+	constructor(_mouse:MouseObject){
+		super();
+		this.eventType=EventType.MOVE_EVENT;
+		this.mouse=_mouse;
+	}
+}
+
+class JME_ClickEvent extends JMEvent{
+	mouse:MouseObject;
+
+	constructor(_mouse:MouseObject){
+		super();
+		this.eventType=EventType.CLICK_EVENT;
+		this.mouse=_mouse;
+	}
+}
+
+class JME_DragEvent extends JMEvent{
+	mouse:MouseObject;
+	startDrag:Boolean;
+	constructor(_mouse:MouseObject,_startDrag:Boolean){
+		super();
+		this.eventType=EventType.DRAG_EVENT;
+		this.mouse=_mouse;
+		this.startDrag=_startDrag;
+	}
+}
+
+class JME_TweenEnd extends JMEvent{
+	target:GameObject;
+	constructor(_target:GameObject){
+		super();
+		this.eventType=ObjectEvent.END_TWEEN;
+		this.target=_target;
+	}
+}

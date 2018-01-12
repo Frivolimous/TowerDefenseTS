@@ -1,0 +1,6 @@
+enum ObjectType{
+	SECOND=1,
+	BUILDING,
+	WALKING,
+	PROJECTILE,
+}
